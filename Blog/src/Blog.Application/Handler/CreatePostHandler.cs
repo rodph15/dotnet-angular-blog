@@ -27,7 +27,7 @@ namespace Blog.Application.Handler
         {
             await _postRepository.CreatePost(_mapper.Map<Post>(request.CreatePostDto));
 
-            return new CreatePostResponse($"Post has been created successfuly");
+            return new CreatePostResponse("Post has been created successfuly");
         }
     }
 }

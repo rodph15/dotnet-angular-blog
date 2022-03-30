@@ -1,0 +1,1 @@
+docker run -d -p 8080:8080 -p 38888:38888 ravendb/ravendb:4.1-windows-nanoserver-latest
