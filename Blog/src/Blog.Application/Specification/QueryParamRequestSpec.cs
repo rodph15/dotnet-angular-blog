@@ -12,6 +12,6 @@ namespace Blog.Application.Specification
     public class QueryParamRequestSpec : Specification<GetPostDto>
     {
         public override Expression<Func<GetPostDto, bool>> ToExpression() =>
-            getPostDto => getPostDto.Skip < getPostDto.Take && (getPostDto.Skip - getPostDto.Take) <= 10;
+            getPostDto => getPostDto.Skip < getPostDto.Take;
     }
 }
