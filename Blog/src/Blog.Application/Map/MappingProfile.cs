@@ -16,6 +16,10 @@ namespace Blog.Application.Map
         {
             CreateMap<CreatePostDto, Post>()
                 .ForMember(x => x.CreatedAt, m => m.MapFrom(o => DateTimeOffset.UtcNow.ToUnixTimeSeconds()))
+                .ForMember(x => x.CommentedEntity, m => m.MapFrom(o => new CommentedEntity
+                {
+                    Id = o.CommentedEntity
+                }))
                 .ForMember(x => x.Id, m => m.MapFrom(o => Guid.NewGuid()));
 
             CreateMap<Post, PostDto>();

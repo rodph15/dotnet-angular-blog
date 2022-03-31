@@ -13,5 +13,7 @@ namespace Blog.Application.Dtos
         public string Content { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string Author { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string CommentedEntity { get; set; }
     }
 }

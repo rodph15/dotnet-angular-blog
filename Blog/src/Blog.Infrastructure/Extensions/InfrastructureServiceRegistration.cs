@@ -18,9 +18,9 @@ namespace Blog.Infrastructure.Extensions
 
         public static IDocumentStore EnsureExists(this IDocumentStore store)
         {
+            using var dbSession = store.OpenSession();
             try
             {
-                using var dbSession = store.OpenSession();
                 dbSession.Query<Post>().Take(0).ToList();
             }
             catch (Raven.Client.Exceptions.Database.DatabaseDoesNotExistException)
@@ -29,6 +29,15 @@ namespace Blog.Infrastructure.Extensions
                 {
                     DatabaseName = store.Database
                 }));
+            }
+
+            if (!dbSession.Query<CommentedEntity>().Any())
+            {
+                dbSession.Store(new CommentedEntity
+                {
+                    Id = Guid.NewGuid().ToString()
+                });
+                dbSession.SaveChanges();
             }
 
             return store;

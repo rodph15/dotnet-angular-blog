@@ -15,23 +15,23 @@ using System.Threading.Tasks;
 
 namespace Blog.Application.Handler
 {
-    public class GetPostHandler : IRequestHandler<GetPostRequest, GetPostResponse>
+    public class GetEntityNewPostHandler : IRequestHandler<GetEntityNewPostRequest, GetPostResponse>
     {
         private readonly IPostRepository _postRepository;
         private readonly IMapper _mapper;
 
-        public GetPostHandler(IPostRepository postRepository, IMapper mapper)
+        public GetEntityNewPostHandler(IPostRepository postRepository, IMapper mapper)
         {
             _postRepository = postRepository;
             _mapper = mapper;
         }
 
-        public async Task<GetPostResponse> Handle(GetPostRequest request, CancellationToken cancellationToken)
+        public async Task<GetPostResponse> Handle(GetEntityNewPostRequest request, CancellationToken cancellationToken)
         {
-            if (!new QueryParamRequestSpec().IsSatisfiedBy(request.GetPostDto))
-                throw new InvalidQueryRequestException("Invalid query parameters!");
+            if (!await _postRepository.HasEntity(request.GetEntityPostDto.Id))
+                throw new InvalidEntityException($"The entity {request.GetEntityPostDto.Id} doesnt exists");
 
-            IReadOnlyCollection<Post> posts = await _postRepository.GetPosts(request.GetPostDto.Skip, request.GetPostDto.Take);
+            IReadOnlyCollection<Post> posts = await _postRepository.GetNewEntityPosts(request.GetEntityPostDto.Id);
 
             return new GetPostResponse(_mapper.Map<IReadOnlyCollection<PostDto>>(posts));
         }

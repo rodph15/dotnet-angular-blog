@@ -12,5 +12,7 @@ namespace Blog.Domain.Entities
         public string Author { get; set; }
         public string Content { get; set; }
         public int CreatedAt { get; set; }
+        public CommentedEntity CommentedEntity { get; set; }
+
     }
 }

@@ -25,11 +25,30 @@ namespace Blog.Infrastructure.Repositories
             await _dbSession.SaveChangesAsync();
         }
 
-        public async Task<IReadOnlyCollection<Post>> GetPosts(int skip, int take) =>
-          await _dbSession
+        public async Task<IReadOnlyCollection<Post>> GeEntityPosts(string EntityId) =>
+            await _dbSession
                     .Query<Post>()
-                    .Skip(0)
-                    .Take(10)
+                    .Where(x => x.CommentedEntity.Id.Equals(EntityId))
                     .ToListAsync();
+
+        public async Task<IReadOnlyCollection<Post>> GetNewEntityPosts(string EntityId) =>
+            await _dbSession
+                    .Query<Post>()
+                    .Where(x => x.CommentedEntity.Id.Equals(EntityId))
+                    .OrderByDescending(x => x.CreatedAt)
+                    .Take(5)
+                    .ToListAsync();
+
+        public async Task<IReadOnlyCollection<Post>> GetPosts(int skip, int take) =>
+            await _dbSession
+                    .Query<Post>()
+                    .Skip(skip)
+                    .Take(take)
+                    .ToListAsync();
+
+        public async Task<bool> HasEntity(string EntityId) =>
+            await _dbSession
+                    .Query<CommentedEntity>()
+                    .AnyAsync(x => x.Id.Equals(EntityId));
     }
 }

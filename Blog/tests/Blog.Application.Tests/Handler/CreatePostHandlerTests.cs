@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Blog.Application.Dtos;
+using Blog.Application.Exceptions;
 using Blog.Application.Handler;
 using Blog.Application.Map;
 using Blog.Application.Request;
@@ -38,13 +40,35 @@ namespace Blog.Application.Tests.Handler
         {
             var handler = new CreatePostHandler(_postRepositoryMock.Object, _mapper);
             _postRepositoryMock.Setup(x => x.CreatePost(It.IsAny<Post>()));
+            _postRepositoryMock.Setup(x => x.HasEntity(It.IsAny<string>())).ReturnsAsync(true);
 
-
-            var result = await handler.Handle(new CreatePostRequest(), CancellationToken.None);
+            var result = await handler.Handle(new CreatePostRequest(new CreatePostDto
+            {
+                Author = "",
+                Content = ""
+            }), CancellationToken.None);
 
             result.Should().NotBeNull();
             result.Should().BeOfType<CreatePostResponse>();
             result.Message.Should().BeEquivalentTo("Post has been created successfuly");
+
+        }
+
+        [Fact]
+        public async Task Handler_Should_Return_MaxContentException()
+        {
+            var handler = new CreatePostHandler(_postRepositoryMock.Object, _mapper);
+            _postRepositoryMock.Setup(x => x.CreatePost(It.IsAny<Post>()));
+            _postRepositoryMock.Setup(x => x.HasEntity(It.IsAny<string>())).ReturnsAsync(true);
+
+            await handler.Invoking(y => y.Handle(new CreatePostRequest(new CreatePostDto
+            {
+                Author = "Teste",
+                Content = string.Join("", Enumerable.Repeat(0, 510).Select(n => (char)new Random().Next(127)))
+            }), CancellationToken.None))
+            .Should()
+            .ThrowAsync<MaxContentException>()
+            .WithMessage("The post content must be less than 500 characteres");
 
         }
     }

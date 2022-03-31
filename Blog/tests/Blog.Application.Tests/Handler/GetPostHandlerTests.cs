@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Blog.Application.Dtos;
+using Blog.Application.Exceptions;
 using Blog.Application.Handler;
 using Blog.Application.Map;
 using Blog.Application.Request;
@@ -49,6 +50,27 @@ namespace Blog.Application.Tests.Handler
             result.Should().NotBeNull();
             result.Should().BeOfType<GetPostResponse>();
             result.PostDtos.Should().HaveCount(2);
+
+        }
+
+        [Fact]
+        public async Task Handler_Should_Return_InvalidQueryRequestException()
+        {
+            var handler = new GetPostHandler(_postRepositoryMock.Object, _mapper);
+            _postRepositoryMock.Setup(x => x.GetPosts(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<Post>
+            {
+                new Post(),
+                new Post()
+            });
+
+            await handler.Invoking(y => y.Handle(new GetPostRequest(new GetPostDto
+            {
+                Skip = 10,
+                Take = 0
+            }), CancellationToken.None))
+            .Should()
+            .ThrowAsync<InvalidQueryRequestException>()
+            .WithMessage("Invalid query parameters!");
 
         }
     }

@@ -11,5 +11,11 @@ namespace Blog.Domain.Contracts
     {
         Task<IReadOnlyCollection<Post>> GetPosts(int skip, int take);
         Task CreatePost(Post post);
+
+        Task<IReadOnlyCollection<Post>> GetNewEntityPosts(string EntityId);
+
+        Task<IReadOnlyCollection<Post>> GeEntityPosts(string EntityId);
+
+        Task<bool> HasEntity(string EntityId);
     }
 }
