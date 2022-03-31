@@ -37,7 +37,7 @@ namespace Blog.Api.Tests.Controllers
 
             _mediatorMock.Setup(x => x.Send(It.IsAny<CreatePostRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new CreatePostResponse());
 
-            var result = await controller.Post(new CreatePostDto());
+            var result = await controller.CreatePost(new CreatePostDto());
 
             var contentResult = result as OkObjectResult;
             contentResult.Should().NotBeNull();
@@ -53,7 +53,7 @@ namespace Blog.Api.Tests.Controllers
 
             _mediatorMock.Setup(x => x.Send(It.IsAny<GetPostRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new GetPostResponse());
 
-            var result = await controller.Get(new GetPostDto());
+            var result = await controller.GetPost(new GetPostDto());
 
             var contentResult = result as OkObjectResult;
             contentResult.Should().NotBeNull();
